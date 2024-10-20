@@ -21,8 +21,8 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    sh 'docker build -t your-dockerhub-username/retailer-app .'
-                    sh 'docker push your-dockerhub-username/retailer-app'
+                    sh 'docker build -t emmas4impact/retailer-app .'
+                    sh 'docker push emmas4impact/retailer-app'
                     echo "done"
                 }
             }
