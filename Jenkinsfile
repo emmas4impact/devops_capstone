@@ -17,11 +17,12 @@ pipeline {
                 sh 'mvn package'
             }
         }
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-//                     sh 'docker build -t your-dockerhub-username/your-app .'
-//                     sh 'docker push your-dockerhub-username/your-app'
+                    // Build the Docker image
+                    sh 'docker build -t your-dockerhub-username/retailer-app .'
+                    sh 'docker push your-dockerhub-username/retailer-app'
                     echo "done"
                 }
             }
