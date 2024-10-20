@@ -1,0 +1,39 @@
+.idea/
+target/
+
+# Maven-specific log and properties files
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IDE-specific files (e.g., IntelliJ, Eclipse)
+.idea/
+*.iml
+*.ipr
+*.iws
+*.class
+*.log
+*.swp
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+
+# Eclipse-specific files
+.project
+.classpath
+
+# MacOS specific files
+.DS_Store
+
+# Logs
+*.log
+
+# Generated test reports
+target/surefire-reports/
