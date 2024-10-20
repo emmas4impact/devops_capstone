@@ -20,6 +20,10 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
+                  withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                  }
+
                     // Build the Docker image
                     sh 'docker build -t emmas4impact/retailer-app .'
                     sh 'docker push emmas4impact/retailer-app'
