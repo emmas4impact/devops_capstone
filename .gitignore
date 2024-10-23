@@ -1,6 +1,6 @@
 .idea/
 target/
-
+.settings
 # Maven-specific log and properties files
 .mvn/
 pom.xml.tag
