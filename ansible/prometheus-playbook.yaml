@@ -1,0 +1,47 @@
+- name: Deploy Prometheus on AWS
+  hosts: prometheus
+  become: yes
+  vars:
+    do_k8s_api_server: "https://43b0d7b9-88f8-4575-93ee-796506abcf30.k8s.ondigitalocean.com"
+  tasks:
+    - name: Install Docker & Dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - docker.io
+        - docker-compose
+        - python3-pip
+        - python3-docker
+
+    - name: Ensure Docker service is running
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create monitoring directory
+      file:
+        path: /home/ubuntu/monitoring
+        state: directory
+
+    - name: Copy Prometheus config
+      template:
+        src: templates/prometheus.yml.j2
+        dest: /home/ubuntu/monitoring/prometheus.yml
+
+    - name: Copy API Token
+      template:
+        src: templates/do_token.j2
+        dest: /home/ubuntu/monitoring/do_token
+        mode: '0600'
+
+    - name: Copy Docker Compose file
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: /home/ubuntu/monitoring/docker-compose.yml
+
+    - name: Deploy Prometheus & Grafana
+      shell: docker-compose up -d
+      args:
+        chdir: /home/ubuntu/monitoring

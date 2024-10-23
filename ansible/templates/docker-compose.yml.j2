@@ -1,0 +1,16 @@
+version: '3.7'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - /home/ubuntu/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/ubuntu/monitoring/do_token:/etc/prometheus/do_token
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+
+

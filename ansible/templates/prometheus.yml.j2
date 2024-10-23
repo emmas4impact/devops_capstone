@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'kubernetes-nodes'
+    kubernetes_sd_configs:
+      - api_server: "https://43b0d7b9-88f8-4575-93ee-796506abcf30.k8s.ondigitalocean.com"
+        role: node
+    tls_config:
+      insecure_skip_verify: true
+    bearer_token_file: /etc/prometheus/do_token
+    - targets: ['67.207.76.20:9090']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['67.207.76.20:9100']
