@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent { label 'master' }
 
     stages {
         stage('Build') {
@@ -34,8 +34,8 @@ pipeline {
                 script {
 
                     sh '''
-                        export PATH=$PATH:/usr/bin
-                        ansible-playbook -i inventory.ini docker-deploy.yaml
+
+                        /usr/bin/ansible-playbook -i inventory.ini docker-deploy.yaml
                     '''
                 }
             }
