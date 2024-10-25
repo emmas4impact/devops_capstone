@@ -35,7 +35,7 @@ pipeline {
 
                     sh '''
 
-                        /usr/bin/ansible-playbook -i inventory.ini docker-deploy.yaml
+                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
                     '''
                 }
             }
