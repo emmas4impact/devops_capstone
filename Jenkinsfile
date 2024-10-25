@@ -34,6 +34,7 @@ pipeline {
                 script {
 
                     sh '''
+                        export PATH=$PATH:/usr/bin
                         ansible-playbook -i inventory.ini docker-deploy.yaml
                     '''
                 }
