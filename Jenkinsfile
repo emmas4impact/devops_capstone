@@ -17,17 +17,26 @@ pipeline {
                 sh 'mvn package'
             }
         }
-        stage('Build and Push Docker Image') {
+        stage('Build and Push Docker Image to DockerHUB') {
             steps {
                 script {
                   withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                          sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                   }
-
-                    // Build the Docker image
-                    sh 'docker build -t emmas4impact/retailer-app .'
-                    sh 'docker push emmas4impact/retailer-app'
+                    sh 'docker build -t emmas4impact/abc-technologies .'
+                    sh 'docker push emmas4impact/abc-technologies'
                     echo "done"
+                }
+            }
+        }
+        stage('Deploy with Ansible') {
+            steps {
+                script {
+
+                    sh '''
+
+                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
+                    '''
                 }
             }
         }
