@@ -1,0 +1,9 @@
+---
+- name: Deploy Application to GKE
+  hosts: localhost
+  tasks:
+    - name: Apply Deployment to GKE
+      command: kubectl apply -f ./kubernetes/deployment.yaml
+    - name: Apply Service to GKE
+      command: kubectl apply -f ./kubernetes/service.yaml
+
