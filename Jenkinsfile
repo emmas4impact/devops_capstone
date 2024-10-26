@@ -38,15 +38,15 @@ pipeline {
                 }
             }
         }
-        stages {
-            stage('Setup GKE Authentication') {
-                steps {
-                    withCredentials([file(credentialsId: 'gke-service-account', variable: 'SERVICE_ACCOUNT_JSON')]) {
+        stage('Setup GKE Authentication') {
+               steps {
+                   withCredentials([file(credentialsId: 'gke-service-account', variable: 'SERVICE_ACCOUNT_JSON')]) {
                         sh 'gcloud auth activate-service-account --key-file=$SERVICE_ACCOUNT_JSON'
                         sh 'gcloud container clusters get-credentials devop-captone --zone us-central1-a'
-                    }
-                }
-            }
+                  }
+               }
+        }
+
             stage('Deploy with Ansible to GKE') {
                 steps {
                     script {
@@ -54,6 +54,6 @@ pipeline {
                     }
                 }
             }
-        }
+
     }
 }
