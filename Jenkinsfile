@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+            PATH = "${env.PATH}:/usr/bin"
+    }
     stages {
         stage('Build') {
             steps {
@@ -32,7 +35,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-
                         ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
                     '''
                 }
