@@ -40,6 +40,11 @@ pipeline {
                 }
             }
         }
+        stage('Verify File Paths') {
+            steps {
+                sh 'ls -R'
+            }
+        }
         stage('Setup GKE Authentication') {
                steps {
                    withCredentials([file(credentialsId: 'gke-service-account', variable: 'SERVICE_ACCOUNT_JSON')]) {
