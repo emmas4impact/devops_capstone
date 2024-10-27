@@ -59,7 +59,7 @@ pipeline {
             stage('Deploy with Ansible to GKE') {
                 steps {
                     script {
-                        sh 'ansible-playbook -i ./ansible/inventory.ini ./ansible/k8s-deploy.yml'
+                        sh 'ansible-playbook -i ./ansible/inventory.ini ./ansible/k8s-deploy.yaml'
                     }
                 }
             }
