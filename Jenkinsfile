@@ -27,26 +27,19 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                     }
-                    sh "docker build -t emmas4impact/abc-technologies:${VERSION} ."
-                    sh "docker tag emmas4impact/abc-technologies:${VERSION} emmas4impact/abc-technologies:latest"
-                    sh "docker push emmas4impact/abc-technologies:${VERSION}"
-                    sh "docker push emmas4impact/abc-technologies:latest"
-                    echo "Docker image emmas4impact/abc-technologies:${VERSION} pushed successfully"
+                    sh 'docker build -t emmas4impact/abc-technologies .'
+                    sh 'docker push emmas4impact/abc-technologies'
+                    echo "done"
                 }
             }
         }
-        stage('Deploy with Ansible') {
+        stage('Deploy Docker with Ansible') {
             steps {
                 script {
-                    sh """
-                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml --extra-vars 'VERSION=${version}'
-                    """
+                    sh '''
+                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
+                    '''
                 }
-            }
-        }
-        stage('Verify File Paths') {
-            steps {
-                sh 'ls -R'
             }
         }
         stage('Setup GKE Authentication') {
@@ -59,7 +52,7 @@ pipeline {
                }
         }
 
-            stage('Deploy with Ansible to GKE') {
+            stage('Deploy k8s manifest with Ansible to GKE') {
                 steps {
                     script {
                         sh 'ansible-playbook -i ./ansible/inventory.ini ./ansible/k8s-deploy.yaml'
