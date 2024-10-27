@@ -1,17 +1,19 @@
 ---
 - hosts: jenkins
   become: yes
+  vars:
+    docker_tag: "{{ VERSION | default('latest') }}"
   tasks:
     - name: Pull Docker image
       docker_image:
         name: emmas4impact/abc-technologies
-        tag: latest
+        tag: "{{ docker_tag }}"
         source: pull
 
     - name: Start Docker container
       docker_container:
         name: abc-app
-        image: emmas4impact/abc-technologies:latest
+        image: "emmas4impact/abc-technologies:{{ docker_tag }}"
         state: started
         ports:
           - "8080:8080"

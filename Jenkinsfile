@@ -3,6 +3,7 @@ pipeline {
     environment {
             PATH = "${env.PATH}:/usr/bin"
             USE_GKE_GCLOUD_AUTH_PLUGIN = 'True'
+            VERSION = "${env.BUILD_NUMBER}"
     }
     stages {
         stage('Build') {
@@ -26,18 +27,20 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                     }
-                    sh 'docker build -t emmas4impact/abc-technologies .'
-                    sh 'docker push emmas4impact/abc-technologies'
-                    echo "done"
+                    sh "docker build -t emmas4impact/abc-technologies:${VERSION} ."
+                    sh "docker tag emmas4impact/abc-technologies:${VERSION} emmas4impact/abc-technologies:latest"
+                    sh "docker push emmas4impact/abc-technologies:${VERSION}"
+                    sh "docker push emmas4impact/abc-technologies:latest"
+                    echo "Docker image emmas4impact/abc-technologies:${VERSION} pushed successfully"
                 }
             }
         }
         stage('Deploy with Ansible') {
             steps {
                 script {
-                    sh '''
-                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
-                    '''
+                    sh """
+                        ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml --extra-vars 'VERSION=${version}'
+                    """
                 }
             }
         }
