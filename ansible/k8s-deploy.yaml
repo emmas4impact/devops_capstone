@@ -3,7 +3,7 @@
   hosts: local
   tasks:
     - name: Apply Deployment to GKE
-      command: kubectl apply -f /devops_capstone/kubernetes/deployment.yaml
+      command: kubectl apply -f deployment.yaml
     - name: Apply Service to GKE
-      command: kubectl apply -f /devops_capstone/kubernetes/service.yaml
+      command: kubectl apply -f service.yaml
 
