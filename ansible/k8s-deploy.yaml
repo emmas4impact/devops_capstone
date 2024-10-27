@@ -3,7 +3,7 @@
   hosts: local
   tasks:
     - name: Apply Deployment to GKE
-      command: kubectl apply -f ./kubernetes/deployment.yaml
+      command: kubectl apply -f kubernetes/deployment.yaml
     - name: Apply Service to GKE
-      command: kubectl apply -f ./kubernetes/service.yaml
+      command: kubectl apply -f kubernetes/service.yaml
 
