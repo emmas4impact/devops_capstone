@@ -2,6 +2,8 @@
 - name: Deploy Application to GKE
   hosts: local
   tasks:
+    - name: Apply cluster binding
+      command: kubectl apply -f clusterbinding.yaml
     - name: Apply Deployment to GKE
       command: kubectl apply -f deployment.yaml
     - name: Apply Service to GKE
