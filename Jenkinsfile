@@ -44,6 +44,7 @@ pipeline {
                steps {
                    withCredentials([file(credentialsId: 'gke-service-account', variable: 'SERVICE_ACCOUNT_JSON')]) {
                         sh 'gcloud auth activate-service-account --key-file=$SERVICE_ACCOUNT_JSON'
+                        sh 'gcloud config set project devop-final-439802'
                         sh 'gcloud container clusters get-credentials devop-captone --zone us-central1-a'
                   }
                }
