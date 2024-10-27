@@ -2,6 +2,7 @@ pipeline {
     agent any
     environment {
             PATH = "${env.PATH}:/usr/bin"
+            USE_GKE_GCLOUD_AUTH_PLUGIN = 'True'
     }
     stages {
         stage('Build') {
