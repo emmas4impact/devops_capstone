@@ -10,17 +10,17 @@
     - name: Apply Service to GKE
       command: kubectl apply -f service.yaml
 
-    - name: Apply Prometheus access role
-      command: kubectl apply -f cluster-monitoring-role.yaml
-
-    - name: Generate GKE service account token for Prometheus
-      command: kubectl create token jenkins-gke-access -n default
-      register: gke_token
-
-    - name: Save token to file
-      copy:
-        content: "{{ gke_token.stdout }}"
-        dest: /home/ubuntu/prometheus-token
+#    - name: Apply Prometheus access role
+#      command: kubectl apply -f cluster-monitoring-role.yaml
+#
+#    - name: Generate GKE service account token for Prometheus
+#      command: kubectl create token jenkins-gke-access -n default
+#      register: gke_token
+#
+#    - name: Save token to file
+#      copy:
+#        content: "{{ gke_token.stdout }}"
+#        dest: /home/ubuntu/prometheus-token
 
 - name: Setup and Run Prometheus on EC2
   hosts: prometheus
