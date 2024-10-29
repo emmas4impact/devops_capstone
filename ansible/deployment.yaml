@@ -4,6 +4,11 @@ metadata:
   name: abc-app-deployment
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1               # Ensures at least one Pod remains available
+      maxSurge: 1                      # Allows one extra Pod above the desired count during updates
   selector:
     matchLabels:
       app: abc-app
@@ -17,3 +22,22 @@ spec:
           image: emmas4impact/abc-technologies:latest
           ports:
             - containerPort: 8080
+          readinessProbe:             # Readiness probe to check if the container is ready to serve traffic
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "200Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"
