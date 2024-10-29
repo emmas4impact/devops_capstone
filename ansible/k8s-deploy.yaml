@@ -1,11 +1,97 @@
----
-- name: Deploy Application to GKE
+- name: Deploy Application to GKE and Configure Prometheus on EC2
   hosts: local
   tasks:
     - name: Apply cluster binding
       command: kubectl apply -f clusterbinding.yaml
+
     - name: Apply Deployment to GKE
       command: kubectl apply -f deployment.yaml
+
     - name: Apply Service to GKE
       command: kubectl apply -f service.yaml
 
+    - name: Apply Prometheus access role
+      command: kubectl apply -f cluster-monitoring-role.yaml
+
+    - name: Generate GKE service account token for Prometheus
+      command: kubectl create token jenkins-gke-access -n default
+      register: gke_token
+
+    - name: Save token to file
+      copy:
+        content: "{{ gke_token.stdout }}"
+        dest: /home/ec2-user/prometheus-token
+
+- name: Setup and Run Prometheus on EC2
+  hosts: prometheus
+  become: yes
+  tasks:
+    - name: Update yum packages
+      yum:
+        name: '*'
+        state: latest
+
+    - name: Install Docker
+      amazon.aws.amazon_linux_extras:
+        name: docker
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: true
+
+    - name: Pull Prometheus image
+      docker_image:
+        name: prom/prometheus
+        tag: v2.55.0
+        source: pull
+
+    - name: Copy Prometheus config
+      copy:
+        src: ./prometheus-config.yml
+        dest: /home/ec2-user/prometheus.yml
+        mode: '0644'
+
+    - name: Run Prometheus container
+      docker_container:
+        name: prometheus
+        image: prom/prometheus:v2.55.0
+        state: started
+        restart_policy: always
+        published_ports:
+          - "9090:9090"
+        volumes:
+          - /home/ec2-user/prometheus.yml:/etc/prometheus/prometheus.yml
+          - /home/ec2-user/prometheus-token:/etc/prometheus/prometheus-token
+
+    - name: Pull Grafana image
+      docker_image:
+        name: grafana/grafana
+        source: pull
+
+    - name: Run Grafana container
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        state: started
+        restart_policy: always
+        published_ports:
+          - "3000:3000"
+
+    - name: Copy Grafana Prometheus datasource config
+      copy:
+        src: ./k8s-configs/grafana-datasource.yml
+        dest: /home/ec2-user/grafana-datasource.yml
+        mode: '0644'
+
+    - name: Restart Grafana container
+      docker_container:
+        name: grafana
+        state: restarted
