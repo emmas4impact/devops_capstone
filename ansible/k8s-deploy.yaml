@@ -93,4 +93,9 @@
     - name: Restart Grafana container
       docker_container:
         name: grafana
-        state: restarted
+        image: grafana/grafana
+        state: started
+        restart: true
+        restart_policy: always
+        published_ports:
+          - "3000:3000"
