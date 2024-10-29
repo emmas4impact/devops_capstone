@@ -20,7 +20,7 @@
     - name: Save token to file
       copy:
         content: "{{ gke_token.stdout }}"
-        dest: /home/ec2-user/prometheus-token
+        dest: /home/ubuntu/prometheus-token
 
 - name: Setup and Run Prometheus on EC2
   hosts: prometheus
