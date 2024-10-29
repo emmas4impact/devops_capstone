@@ -32,10 +32,9 @@
         state: latest
 
     - name: Install Docker
-      amazon.aws.amazon_linux_extras:
+      yum:
         name: docker
         state: present
-
     - name: Start Docker service
       service:
         name: docker
