@@ -54,7 +54,7 @@
 
     - name: Copy Prometheus config
       copy:
-        src: ./prometheus-config.yml
+        src: ./k8s-configs/prometheus-config.yml
         dest: /home/ec2-user/prometheus.yml
         mode: '0644'
 
