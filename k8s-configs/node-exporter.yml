@@ -12,15 +12,28 @@ spec:
       labels:
         app: node-exporter
     spec:
-      hostNetwork: true
+      # Removed hostNetwork: true
       containers:
         - name: node-exporter
           image: prom/node-exporter:v1.6.1
           ports:
-            - containerPort: 9200
-              hostPort: 9200
-              protocol: TCP
+            - containerPort: 9100  # Use the standard node-exporter port
+              name: metrics
           resources:
             requests:
               cpu: 100m
               memory: 50Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter
+  namespace: kube-system
+spec:
+  type: ClusterIP
+  selector:
+    app: node-exporter
+  ports:
+    - name: metrics
+      port: 9100
+      targetPort: metrics
