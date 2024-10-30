@@ -63,7 +63,7 @@
         name: prometheus
         image: prom/prometheus:v2.55.0
         state: started
-        restart_policy: always
+        #restart_policy: always
         published_ports:
           - "9090:9090"
         volumes:
