@@ -18,7 +18,7 @@ spec:
           image: prom/node-exporter:v1.8.2
           ports:
             - containerPort: 9200
-              hostPort: 9200
+              hostPort: 9300
               protocol: TCP
           resources:
             requests:
