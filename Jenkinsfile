@@ -3,6 +3,7 @@ pipeline {
     environment {
             PATH = "${env.PATH}:/usr/bin"
             USE_GKE_GCLOUD_AUTH_PLUGIN = 'True'
+            VERSION = "${env.BUILD_NUMBER}"
     }
     stages {
         stage('Build') {
@@ -32,18 +33,13 @@ pipeline {
                 }
             }
         }
-        stage('Deploy with Ansible') {
+        stage('Deploy Docker with Ansible') {
             steps {
                 script {
                     sh '''
                         ansible-playbook -i ./ansible/inventory.ini ./ansible/docker-deploy.yaml
                     '''
                 }
-            }
-        }
-        stage('Verify File Paths') {
-            steps {
-                sh 'ls -R'
             }
         }
         stage('Setup GKE Authentication') {
@@ -56,7 +52,7 @@ pipeline {
                }
         }
 
-            stage('Deploy with Ansible to GKE') {
+            stage('Deploy k8s manifest with Ansible to GKE') {
                 steps {
                     script {
                         sh 'ansible-playbook -i ./ansible/inventory.ini ./ansible/k8s-deploy.yaml'
