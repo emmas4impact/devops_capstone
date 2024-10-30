@@ -29,12 +29,12 @@ scrape_configs:
   - job_name: 'kubernetes'
     kubernetes_sd_configs:
       - role: pod
-        api_server: http://35.202.160.183/
+        api_server: https://34.122.62.35
     bearer_token_file: /home/ec2-user/prometheus-token
     tls_config:
-      #ca_file: /etc/prometheus/secrets/ca.crt
       insecure_skip_verify: true
     relabel_configs:
       - source_labels: [__meta_kubernetes_namespace]
         action: keep
         regex: "monitoring|default"
+
