@@ -30,9 +30,9 @@ scrape_configs:
     kubernetes_sd_configs:
       - role: pod
         api_server: https://34.122.62.35
-    bearer_token_file: /home/ec2-user/prometheus-token
+    bearer_token_file: /etc/prometheus/secrets/prometheus-token
     tls_config:
-      ca_file: /home/ec2-user/ca.crt
+      ca_file: /etc/prometheus/secrets/ca.crt
     relabel_configs:
       - source_labels: [__meta_kubernetes_namespace]
         action: keep
