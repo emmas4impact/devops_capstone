@@ -15,10 +15,10 @@ spec:
       hostNetwork: true
       containers:
         - name: node-exporter
-          image: prom/node-exporter:v1.8.2
+          image: prom/node-exporter:v1.6.1
           ports:
-            - containerPort: 9300
-              hostPort: 9300
+            - containerPort: 9200
+              hostPort: 9200
               protocol: TCP
           resources:
             requests:
