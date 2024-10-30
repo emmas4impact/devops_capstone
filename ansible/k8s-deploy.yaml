@@ -2,13 +2,16 @@
   hosts: local
   tasks:
     - name: Apply cluster binding
-      command: kubectl apply -f clusterbinding.yaml
+      command: kubectl apply -f ../k8s-configs/clusterbinding.yaml
 
     - name: Apply Deployment to GKE
-      command: kubectl apply -f deployment.yaml
+      command: kubectl apply -f ../k8s-configs/deployment.yaml
 
     - name: Apply Service to GKE
-      command: kubectl apply -f service.yaml
+      command: kubectl apply -f ../k8s-configs/service.yaml
+
+    - name: Apply node-exporter DaemonSet
+      command: kubectl apply -f ../k8s-configs/node-exporter.yml
 
 #    - name: Apply Prometheus access role
 #      command: kubectl apply -f cluster-monitoring-role.yaml
