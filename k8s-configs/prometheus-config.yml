@@ -36,8 +36,8 @@ scrape_configs:
         api_server: http://35.202.160.183/
     bearer_token_file: /home/ec2-user/prometheus-token
     tls_config:
-      #ca_file: /etc/prometheus/secrets/ca.crt
-      insecure_skip_verify: true
+      ca_file: /etc/prometheus/secrets/ca.crt
+      #insecure_skip_verify: true
     relabel_configs:
       - source_labels: [__meta_kubernetes_namespace]
         action: keep
