@@ -29,7 +29,7 @@ scrape_configs:
   - job_name: 'kubernetes'
     kubernetes_sd_configs:
       - role: pod
-        api_server: https://34.122.62.35
+        api_server: http://34.122.62.35
     bearer_token_file: /etc/prometheus/secrets/prometheus-token
     tls_config:
       ca_file: /etc/prometheus/secrets/ca.crt
