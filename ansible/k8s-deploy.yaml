@@ -36,6 +36,35 @@
 #        content: "{{ gke_token.stdout }}"
 #        dest: /home/ubuntu/prometheus-token
 
+- name: Setup and Run Prometheus and Grafana on EC2
+  hosts: prometheus
+  become: yes
+  tasks:
+    - name: Update all yum packages
+      yum:
+        name: '*'
+        state: latest
+      tags: update
+
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+      tags: docker
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+      tags: docker
+
+    - name: Add ec2-user to Docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: true
+      tags: docker
 
     - name: Pull Grafana Docker image
       docker_image:
