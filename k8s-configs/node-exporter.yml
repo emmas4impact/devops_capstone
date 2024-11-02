@@ -3,6 +3,8 @@ kind: DaemonSet
 metadata:
   name: node-exporter
   namespace: kube-system
+  labels:
+    app: node-exporter
 spec:
   selector:
     matchLabels:
@@ -12,28 +14,11 @@ spec:
       labels:
         app: node-exporter
     spec:
-      # Removed hostNetwork: true
       containers:
         - name: node-exporter
-          image: prom/node-exporter:v1.6.1
+          image: prom/node-exporter:v1.8.1
           ports:
-            - containerPort: 9100  # Use the standard node-exporter port
-              name: metrics
-          resources:
-            requests:
-              cpu: 100m
-              memory: 50Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: node-exporter
-  namespace: kube-system
-spec:
-  type: ClusterIP
-  selector:
-    app: node-exporter
-  ports:
-    - name: metrics
-      port: 9100
-      targetPort: metrics
+            - containerPort: 9100
+              hostPort: 9100
+          securityContext:
+            privileged: true

@@ -21,8 +21,8 @@
 
 
 
-#    - name: Apply node-exporter DaemonSet
-#      command: kubectl apply -f ../k8s-configs/node-exporter.yml
+    - name: Apply node-exporter DaemonSet
+      command: kubectl apply -f ../k8s-configs/node-exporter.yml
 
 #    - name: Apply Prometheus access role
 #      command: kubectl apply -f cluster-monitoring-role.yaml
