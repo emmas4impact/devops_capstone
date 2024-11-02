@@ -3,8 +3,6 @@ kind: DaemonSet
 metadata:
   name: node-exporter
   namespace: kube-system
-  labels:
-    app: node-exporter
 spec:
   selector:
     matchLabels:
@@ -20,5 +18,25 @@ spec:
           ports:
             - containerPort: 9100
               hostPort: 9100
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 50Mi
           securityContext:
-            privileged: true
+            runAsUser: 65534
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: proc
+              mountPath: /host/proc
+              readOnly: true
+            - name: sys
+              mountPath: /host/sys
+              readOnly: true
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
