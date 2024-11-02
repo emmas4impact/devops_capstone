@@ -1,25 +1,24 @@
-- name: Set KUBECONFIG and Deploy to EKS
+- name: Deploy Application to EKS
   hosts: local
   tasks:
-    - name: Ensure KUBECONFIG is set for session
+    - name: Set KUBECONFIG environment variable for session
       set_fact:
         kubeconfig_path: "/home/ubuntu/.kube/config"
-      shell: |
-        export KUBECONFIG={{ kubeconfig_path }}
-        kubectl get nodes
-      register: kubectl_check
-      ignore_errors: yes
-      changed_when: false  # This won't mark the task as changed, as it's a check
 
-    - name: Debug KUBECONFIG check result
-      debug:
-        var: kubectl_check.stdout
+    - name: Export KUBECONFIG environment variable
+      shell: export KUBECONFIG={{ kubeconfig_path }}
+      ignore_errors: true
 
     - name: Apply Deployment to EKS
-      shell: KUBECONFIG={{ kubeconfig_path }} kubectl apply -f ../k8s-configs/deployment.yaml
+      command: kubectl apply -f ../k8s-configs/deployment.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
 
     - name: Apply Service to EKS
-      shell: KUBECONFIG={{ kubeconfig_path }} kubectl apply -f ../k8s-configs/service.yaml
+      command: kubectl apply -f ../k8s-configs/service.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
 
 
 #    - name: Apply node-exporter DaemonSet
