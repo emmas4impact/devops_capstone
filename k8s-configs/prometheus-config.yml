@@ -1,32 +1,21 @@
 global:
   scrape_interval: 15s
-  scrape_timeout: 10s
-  evaluation_interval: 1m
 
 scrape_configs:
   - job_name: 'kubernetes'
     kubernetes_sd_configs:
-      - role: pod
-        api_server: https://34.122.62.35:443
-    bearer_token_file: /etc/prometheus/secrets/prometheus-token
-    tls_config:
-      ca_file: /etc/prometheus/secrets/ca.crt
-      insecure_skip_verify: false
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_namespace]
-        action: keep
-        regex: "monitoring|default"
+      - role: node
+        api_server: https://16AB1657E2355B0362D1105B28367E2C.gr7.eu-north-1.eks.amazonaws.com
+        bearer_token: /etc/prometheus/secrets/token
+        tls_config:
+          ca_file: /etc/prometheus/secrets/ca.crt
+          insecure_skip_verify: true  # set to false if you have a valid CA certificate
 
-  - job_name: 'node-exporter'
+  - job_name: 'kubernetes-pods'
     kubernetes_sd_configs:
-      - role: endpoints
-        namespaces:
-          names:
-            - kube-system
-    tls_config:
-      ca_file: /etc/prometheus/secrets/ca.crt
-      insecure_skip_verify: false
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_endpoint_port_name]
-        action: keep
-        regex: metrics
+      - role: pod
+        api_server: https://16AB1657E2355B0362D1105B28367E2C.gr7.eu-north-1.eks.amazonaws.com
+        bearer_token_file: /etc/prometheus/secrets/token
+        tls_config:
+          ca_file: /etc/prometheus/secrets/ca.crt
+          insecure_skip_verify: true
