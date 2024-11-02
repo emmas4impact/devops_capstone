@@ -2,41 +2,35 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: node-exporter
-  namespace: kube-system
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: node-exporter
 spec:
   selector:
     matchLabels:
-      app: node-exporter
+      app.kubernetes.io/name: node-exporter
   template:
     metadata:
       labels:
-        app: node-exporter
+        app.kubernetes.io/name: node-exporter
     spec:
       containers:
         - name: node-exporter
           image: prom/node-exporter:v1.8.1
           ports:
             - containerPort: 9100
-              hostPort: 9100
-              protocol: TCP
+              name: scrape
           resources:
             requests:
-              cpu: 100m
-              memory: 50Mi
+              cpu: "100m"
+              memory: "50Mi"
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
           securityContext:
-            runAsUser: 65534
-            allowPrivilegeEscalation: false
-          volumeMounts:
-            - name: proc
-              mountPath: /host/proc
-              readOnly: true
-            - name: sys
-              mountPath: /host/sys
-              readOnly: true
-      volumes:
-        - name: proc
-          hostPath:
-            path: /proc
-        - name: sys
-          hostPath:
-            path: /sys
+            privileged: true
+      hostNetwork: true
+      hostPID: true
+      tolerations:
+        - effect: NoSchedule
+          operator: Exists
