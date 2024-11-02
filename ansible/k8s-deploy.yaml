@@ -1,17 +1,29 @@
-- name: Deploy Application to GKE and Configure Prometheus on EC2
+- name: Set KUBECONFIG and Deploy to EKS
   hosts: local
   tasks:
-    - name: Apply cluster binding
-      command: kubectl apply -f ../k8s-configs/clusterbinding.yaml
+    - name: Ensure KUBECONFIG is set for session
+      set_fact:
+        kubeconfig_path: "/home/ubuntu/.kube/config"
+      shell: |
+        export KUBECONFIG={{ kubeconfig_path }}
+        kubectl get nodes
+      register: kubectl_check
+      ignore_errors: yes
+      changed_when: false  # This won't mark the task as changed, as it's a check
 
-    - name: Apply Deployment to GKE
-      command: kubectl apply -f ../k8s-configs/deployment.yaml
+    - name: Debug KUBECONFIG check result
+      debug:
+        var: kubectl_check.stdout
 
-    - name: Apply Service to GKE
-      command: kubectl apply -f ../k8s-configs/service.yaml
+    - name: Apply Deployment to EKS
+      shell: KUBECONFIG={{ kubeconfig_path }} kubectl apply -f ../k8s-configs/deployment.yaml
 
-    - name: Apply node-exporter DaemonSet
-      command: kubectl apply -f ../k8s-configs/node-exporter.yml
+    - name: Apply Service to EKS
+      shell: KUBECONFIG={{ kubeconfig_path }} kubectl apply -f ../k8s-configs/service.yaml
+
+
+#    - name: Apply node-exporter DaemonSet
+#      command: kubectl apply -f ../k8s-configs/node-exporter.yml
 
 #    - name: Apply Prometheus access role
 #      command: kubectl apply -f cluster-monitoring-role.yaml
