@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: abc-app-deployment
 spec:
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: 1               # Ensures at least one Pod remains available
-      maxSurge: 1                      # Allows one extra Pod above the desired count during updates
+      maxUnavailable: 1
+      maxSurge: 1
   selector:
     matchLabels:
       app: abc-app
