@@ -4,6 +4,7 @@ pipeline {
             PATH = "${env.PATH}:/usr/bin"
             USE_GKE_GCLOUD_AUTH_PLUGIN = 'True'
             VERSION = "${env.BUILD_NUMBER}"
+            KUBECONFIG = '/home/ubuntu/.kube/config'
     }
     stages {
         stage('Build') {
@@ -42,23 +43,13 @@ pipeline {
                 }
             }
         }
-        stage('Setup GKE Authentication') {
-               steps {
-                   withCredentials([file(credentialsId: 'gke-service-account', variable: 'SERVICE_ACCOUNT_JSON')]) {
-                        sh 'gcloud auth activate-service-account --key-file=$SERVICE_ACCOUNT_JSON'
-                        sh 'gcloud config set project devop-final-439802'
-                        sh 'gcloud container clusters get-credentials devop-captone --zone us-central1-a'
-                  }
-               }
-        }
-
-            stage('Deploy k8s manifest with Ansible to GKE') {
+        stage('Deploy k8s manifest with Ansible to EKS') {
                 steps {
                     script {
                         sh 'ansible-playbook -i ./ansible/inventory.ini ./ansible/k8s-deploy.yaml'
                     }
                 }
-            }
+        }
 
     }
 }

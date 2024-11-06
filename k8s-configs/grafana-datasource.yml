@@ -9,4 +9,3 @@ datasources:
     isDefault: true
     jsonData:
       timeInterval: "5s"
-`

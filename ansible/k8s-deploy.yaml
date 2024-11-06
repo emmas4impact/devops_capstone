@@ -1,14 +1,25 @@
-- name: Deploy Application to GKE and Configure Prometheus on EC2
+- name: Deploy Application to EKS
   hosts: local
   tasks:
-    - name: Apply cluster binding
-      command: kubectl apply -f ../k8s-configs/clusterbinding.yaml
+    - name: Set KUBECONFIG environment variable for session
+      set_fact:
+        kubeconfig_path: "/home/ubuntu/.kube/config"
 
-    - name: Apply Deployment to GKE
+    - name: Export KUBECONFIG environment variable
+      shell: export KUBECONFIG={{ kubeconfig_path }}
+      ignore_errors: true
+
+    - name: Apply Deployment to EKS
       command: kubectl apply -f ../k8s-configs/deployment.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
 
-    - name: Apply Service to GKE
+    - name: Apply Service to EKS
       command: kubectl apply -f ../k8s-configs/service.yaml
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+
+
 
     - name: Apply node-exporter DaemonSet
       command: kubectl apply -f ../k8s-configs/node-exporter.yml
@@ -25,80 +36,58 @@
 #        content: "{{ gke_token.stdout }}"
 #        dest: /home/ubuntu/prometheus-token
 
-- name: Setup and Run Prometheus on EC2
+- name: Setup and Run Prometheus and Grafana on EC2
   hosts: prometheus
   become: yes
   tasks:
-    - name: Update yum packages
+    - name: Update all yum packages
       yum:
         name: '*'
         state: latest
+      tags: update
 
     - name: Install Docker
       yum:
         name: docker
         state: present
-    - name: Start Docker service
+      tags: docker
+
+    - name: Start and enable Docker service
       service:
         name: docker
         state: started
+        enabled: true
+      tags: docker
 
-    - name: Add ec2-user to docker group
+    - name: Add ec2-user to Docker group
       user:
         name: ec2-user
         groups: docker
         append: true
+      tags: docker
 
-    - name: Pull Prometheus image
-      docker_image:
-        name: prom/prometheus
-        tag: v2.55.0
-        source: pull
-
-    - name: Copy Prometheus config
-      copy:
-        src: ../k8s-configs/prometheus-config.yml
-        dest: /home/ec2-user/prometheus.yml
-        mode: '0644'
-
-    - name: Run Prometheus container
-      docker_container:
-        name: prometheus
-        image: prom/prometheus:v2.55.0
-        state: started
-        restart_policy: always
-        published_ports:
-          - "9090:9090"
-        volumes:
-          - /home/ec2-user/prometheus.yml:/etc/prometheus/prometheus.yml
-          - /home/ec2-user/prometheus-token:/etc/prometheus/prometheus-token
-
-    - name: Pull Grafana image
+    - name: Pull Grafana Docker image
       docker_image:
         name: grafana/grafana
         source: pull
+      tags: grafana
 
-    - name: Run Grafana container
-      docker_container:
-        name: grafana
-        image: grafana/grafana
-        state: started
-        restart_policy: always
-        published_ports:
-          - "3000:3000"
-
-    - name: Copy Grafana Prometheus datasource config
+    - name: Copy Grafana Prometheus datasource configuration
       copy:
         src: ../k8s-configs/grafana-datasource.yml
         dest: /home/ec2-user/grafana-datasource.yml
+        owner: ec2-user
         mode: '0644'
+      tags: grafana
 
-    - name: Restart Grafana container
+    - name: Run Grafana container with Prometheus datasource
       docker_container:
         name: grafana
         image: grafana/grafana
         state: started
-        restart: true
         restart_policy: always
-        published_ports:
+        ports:
           - "3000:3000"
+        volumes:
+          - /home/ec2-user/grafana-datasource.yml:/etc/grafana/provisioning/datasources/grafana-datasource.yml
+      tags: grafana
