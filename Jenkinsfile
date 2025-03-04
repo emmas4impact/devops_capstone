@@ -1,5 +1,6 @@
 pipeline {
     agent { label 'jenkins-slave' }
+
     environment {
             PATH = "${env.PATH}:/usr/bin"
             USE_GKE_GCLOUD_AUTH_PLUGIN = 'True'
