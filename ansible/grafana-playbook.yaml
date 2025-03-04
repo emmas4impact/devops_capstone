@@ -1,0 +1,19 @@
+- name: Deploy Grafana on AWS
+  hosts: prometheus
+  become: yes
+  tasks:
+    - name: Ensure Grafana provisioning directory exists
+      file:
+        path: /home/ubuntu/monitoring/provisioning/datasources
+        state: directory
+        mode: '0755'
+
+    - name: Copy Grafana datasource config
+      template:
+        src: templates/grafana-datasource.yml.j2
+        dest: /home/ubuntu/monitoring/provisioning/datasources/datasource.yml
+        mode: '0644'
+
+    - name: Restart Grafana
+      shell: docker restart grafana
+

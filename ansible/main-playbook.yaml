@@ -1,0 +1,2 @@
+- import_playbook: prometheus-playbook.yaml
+- import_playbook: grafana-playbook.yaml
