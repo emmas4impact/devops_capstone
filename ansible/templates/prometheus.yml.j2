@@ -9,6 +9,7 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     bearer_token_file: /etc/prometheus/do_token
+    - targets: ['67.207.76.20:9090']
 
   - job_name: 'node-exporter'
     static_configs:

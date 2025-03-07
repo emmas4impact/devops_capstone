@@ -1,15 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: abc-app-deployment
+  name: abc
   namespace: default
 spec:
   replicas: 2
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 1
-      maxSurge: 1
   selector:
     matchLabels:
       app: abc-app
@@ -23,22 +18,3 @@ spec:
           image: emmas4impact/abc-technologies:latest
           ports:
             - containerPort: 8080
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 15
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 20
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "200Mi"
-            limits:
-              cpu: "100m"
-              memory: "200Mi"
