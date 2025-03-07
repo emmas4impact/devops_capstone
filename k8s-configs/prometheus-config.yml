@@ -1,0 +1,30 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+    - targets: [ "localhost:9090" ]
+  - job_name: 'kubernetes'
+    kubernetes_sd_configs:
+      - role: node
+        api_server: https://16AB1657E2355B0362D1105B28367E2C.gr7.eu-north-1.eks.amazonaws.com
+        bearer_token: /etc/prometheus/secrets/token
+        tls_config:
+          ca_file: /etc/prometheus/secrets/ca.crt
+          insecure_skip_verify: true  # set to false if you have a valid CA certificate
+
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+        api_server: https://16AB1657E2355B0362D1105B28367E2C.gr7.eu-north-1.eks.amazonaws.com
+        bearer_token_file: /etc/prometheus/secrets/token
+        tls_config:
+          ca_file: /etc/prometheus/secrets/ca.crt
+          insecure_skip_verify: true
+  - job_name: 'node-exporter'
+    kubernetes_sd_configs:
+      - role: node
+    relabel_configs:
+      - source_labels: [ __meta_kubernetes_node_label_kubernetes_io_hostname ]
+        target_label: instance

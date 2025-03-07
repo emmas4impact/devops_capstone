@@ -25,6 +25,7 @@ pipeline {
         stage('Build and Push Docker Image to DockerHUB') {
             steps {
                 script {
+
                     withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-credentials-id',
